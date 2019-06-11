@@ -1,0 +1,610 @@
+/*
+Theme Name: Anthology Theme 2018
+Theme URI: http://www.anthologytile.com
+Author: The Rebel Idea
+Author URI: http://www.therebelidea.com
+Version: 1.0
+*/
+
+body { 
+	font-family: 'Lato', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 { 
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+a{ 
+	color: #2C4360;
+}
+
+#menu { 
+	background-color: white;
+	width: 100%;
+	padding-top: 20px;
+	padding-bottom: 25px;
+	padding-left: 0;
+	padding-right: 0;
+	text-align: center;
+}
+
+#sidebar { 
+	width: 100%;
+	z-index: 10;
+}
+
+nav.navbox, div.search { 
+	display: none;
+}
+
+#dealer-login { 
+	position: absolute;
+	right: 0;
+	top:0;
+	padding-left: 15px;
+	padding-right: 15px;
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+#dealer-login-header { 
+	background-color: rgba(255,255,255,0.9);
+	padding: 10px;
+	padding-left: 15px;
+	padding-right: 15px;	
+}
+
+#dealer-login-panel { 
+	background-color:#2C4360;
+	padding: 10px;
+	padding-bottom: 2px;;
+	padding-left: 15px;
+	padding-right: 15px;
+	display: none;	
+	max-width: 200px;
+}
+
+#dealer-login-panel label { 
+	display: block;
+	color: #fff;
+}
+
+#dealer-login-panel .login-username { 
+	margin-bottom: 5px;
+}
+
+#dealer-login-panel input { 
+	margin-bottom: 5px;
+	font-weight: 300;
+}
+
+#dealer-login-panel button{ 
+	color:#fff;
+	text-transform: uppercase;
+	font-weight: 300;
+	background-color: #B2B2B2;
+	padding-left: 15px;
+	padding-right: 15px;
+} 
+
+#dealer-login a { 
+	color: #2C4360;
+} 
+
+#menu ul { 
+	text-align: left;
+	margin-bottom: 40px;
+	list-style: none;
+	padding-left: 0;
+}
+
+#menu ul li { 
+	padding-left: 30px;
+}
+
+.navbar-nav li { 
+	padding-left: 5px !important;
+}
+
+#menu ul li:firstChild {
+	padding-top: 0px;
+} 
+
+#menu ul li a, .navbar-brand { 
+	font-weight: 300;
+	text-transform: uppercase;
+	color: #B7B5B5;
+	display: block;
+	padding-top: 8px;
+	padding-bottom: 8px;	
+}
+
+.navbar-light .navbar-brand {
+	color: #B2B2B2;
+}
+
+#menu ul li a:hover { 
+	color: #fff;
+	text-decoration: none;
+}
+
+
+#menu ul li:hover { 
+	background-color:#2C4360;
+	color: #fff; 
+}
+
+#menu ul li ul.sub-menu { 
+	display: none;
+}
+
+
+#menu img {
+	width: 100%;
+	max-width: 220px;
+	height: auto;
+	margin-left: auto;
+	margin-right: auto;	
+}
+
+#menu input { 
+	border-radius: 20px;
+	border: 1px solid #CECBCB;
+	background-color: #FAFAFA;
+	height: 38px;
+	padding: 3px;
+	padding-left: 10px;
+	font-weight: 300;
+	font-size: 12px;
+	width: 65%;
+	margin-right: 10px;
+}
+
+.dropdown-menu { 
+	background-color: #2C4360;
+	color: #fff;
+	border: 0;
+}
+
+.dropdown-item { 
+	color: #fff !important;
+	border-top: 1px solid #fff;
+}
+
+.navbar-nav .dropdown-menu { 
+	width: 98%;
+}
+
+#home-slider { 
+	overflow: hidden;
+}
+
+.container, .content { 
+	background: white;
+}
+
+.content { 
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.container-fuild { 
+	width: 100%;
+}
+
+#visual-menu { 
+	width: 100%;
+	clear: both;
+	z-index: 1000;
+	margin-top: 10px;
+}
+
+#visual-menu .col-sm-3 { 
+	overflow: hidden;
+	display: block;	
+	margin-bottom: 10px;
+	background-size: cover;
+	background-position: center center;
+	cursor: pointer;
+	
+} 
+
+#home-gallery { 
+	padding: 0;
+	position: relative;	
+	cursor: pointer;
+}
+
+.shop-by-label { 
+	background-color: rgba(255,255,255,0.8);
+	display: inline-table;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+
+.shop-by-label h5, .shop-by-label h6 { 
+	padding-left: 20px;
+	padding-right: 20px;	
+	color: #344A66;
+} 
+
+.shop-by-label h5 { 
+	line-height: 0.5em;
+	font-size: 3em;
+	font-weight: 100;
+}
+
+.shop-by-label.left { 
+	position: absolute;
+	left: -10px;
+	top:30px;
+	
+}
+
+.shop-by-label.center { 
+	position: absolute;
+	left: 0;
+	width: 100%;
+	top:42%	
+} 
+
+.shop-by-label.right { 
+	position: absolute;
+	right: -10px;
+	bottom:30px;	
+}
+
+.shop-by-label.view_more { 
+	padding: 20px;
+	padding-bottom: 10px;
+	z-index: 1000;
+}
+
+.shop-by-label.view_more h5 { 
+		font-size: 2em;
+}
+
+.sub-menu { 
+	position: absolute;
+	left:260px;
+	width: 230px;
+	padding-left: 10px;
+	background-color: #344A66;
+}
+
+.sub-menu a { 
+	color:#000;	
+} 
+
+#inspiration-gallery-home { 
+	overflow: hidden;
+	z-index: 500;
+}
+
+#inspiration-gallery-home .col-sm-3 { 
+	padding: 0;
+	display: inline;
+	min-height: 300px;
+	background-position: center center;
+	background-size: cover;
+}
+
+#home-gallery-header { 
+	padding-top: 30px;
+	padding-bottom: 10px;
+	text-align: right;
+}
+
+#home-gallery-header h5, #home-gallery-header h6 {
+	color: #344A66;
+} 
+
+#home-gallery-header h5 {
+	font-size: 3em;	
+	font-weight: 100;
+	line-height: 0.6em;
+}
+
+footer { 
+	text-align: center;
+	margin-top: 20px;
+}
+
+footer ul { 
+	list-style: none;
+	padding: 0;
+}
+footer ul li { 
+	display: inline;
+	margin-left: 5px;
+	margin-right: 5px;
+} 
+
+footer img.icon { 
+	height: 45px;
+	width: auto;
+} 
+
+
+.woocommerce form .form-row { 
+	display: list-item !important;
+    list-style: none !important;
+}
+
+#customer_details {
+    display: flex;
+}
+
+.col2-set .col-1,
+.col2-set .col-2 {
+    width: 50%;
+    max-width: 100%;
+    flex: 1 0 auto;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation { 
+	  width: 20% !important;
+}
+.woocommerce-account .woocommerce-MyAccount-content { 
+	width: 78% !important;
+}
+
+.welcome-message { 
+	margin-bottom: 10px;
+}
+
+.welcome-message p { 
+	color: #fff;
+}
+
+/* Style WC Account Endpoint Links */
+nav.woocommerce-MyAccount-navigation ul {
+  list-style-type: none;
+  padding-left: 0;
+  max-width:200px;
+  font-size: 17px;
+  line-height: 26px;
+}
+nav.woocommerce-MyAccount-navigation ul li {
+  padding: 8px 20px;
+  background-color: rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+nav.woocommerce-MyAccount-navigation ul li.is-active {
+  background-color: rgba(0,0,0,0.1);
+}
+nav.woocommerce-MyAccount-navigation ul li.is-active a {
+  color: rgba(0,0,0,0.8); cursor: default;
+}
+nav.woocommerce-MyAccount-navigation ul li.is-active:after {
+  content: "";
+  height: 0;
+  width: 0;
+  border-top: 20px solid transparent;
+  border-left: 14px solid rgba(0,0,0,0.1);
+  border-bottom: 20px solid transparent;
+  float: right;
+  margin-right: -34px;
+  margin-top: -7px;
+}
+nav.woocommerce-MyAccount-navigation ul li:not(.is-active):hover {
+  background-color: rgba(0,0,0,0.07);
+}
+nav.woocommerce-MyAccount-navigation ul li:not(.is-active):hover:after { 
+  content: "";
+  height: 0;
+  width: 0;
+  border-top: 20px solid transparent;
+  border-left: 14px solid rgba(0,0,0,0.07);
+  border-bottom: 20px solid transparent;
+  float: right;
+  margin-right: -34px;
+  margin-top: -7px;
+}
+
+#img-header { 
+	margin-bottom: 10px;
+	background-position: center top;
+	background-size: cover;
+	background-repeat: repeat-x;
+}
+
+#img-header.medium { 
+	min-height: 180px;
+} 
+
+#img-header.large { 
+	min-height: 120px;
+	max-height: 500px !important;
+} 
+
+.woocommerce div.product div.images .flex-control-thumbs { 
+	margin-top: 10px;
+}
+
+.woocommerce div.product div.images .flex-control-thumbs li { 
+	width: 20%;
+	margin-right: 5px;
+	border: 1px solid #ccc;
+}
+
+.balance-vertical-space .col-sm-3{ 
+	margin-bottom: 20px;
+}
+
+.term-description {
+	display: none;
+}
+
+#materials img { 
+	width: 100%;
+	height: auto;
+}
+
+#filters { 
+	margin-top: 20px;
+	padding-left: 30px;
+}
+
+#filters h4 { 
+	display: block;
+	margin-bottom: 10px;
+	text-align: left !important;
+	border-bottom: 1px solid #000;
+} 
+
+#filters .widgetSidebar { 
+	clear: both;
+	display: block;
+	margin-bottom: 10px;
+}
+ 
+ 
+#filters .widgetSidebar p {  
+	margin-bottom: 3px;
+	text-align: left;	
+} 
+
+.fa-check-circle { 
+	color: green;		
+}
+
+.fa-ban {
+	color: red;
+} 
+
+.woocommerce-shipping-destination { 
+		display: none;
+		visibility: hidden;
+}
+
+.related.products { 
+	clear: both;
+}
+
+/* Change WC Acct Page Column Widths */
+@media only screen and (min-width: 769px) {
+  .woocommerce-account .woocommerce-MyAccount-navigation {
+    width: 22%;
+  }
+  .woocommerce-account .woocommerce-MyAccount-content { 
+    width: 75%;
+  }
+}
+
+@media (min-width: 576px) {}
+
+
+@media (min-width: 768px) {
+	
+	#menu { 
+		float: left;
+		width: 260px;
+		padding-top: 10px;	
+	}
+	
+	nav.navbar { 
+		display: none;
+	}
+
+	nav.navbox, div.search { 	
+		display: block;
+	} 
+	
+	#sidebar { 
+		position: absolute; 
+		left: 0;
+		top: 0;
+		width: 260px;
+		/*height: 100%; */
+	}
+	#dealer-login { 
+		right: 30px;	
+		z-index: 1000;
+	} 
+	
+	#home-gallery-header h5 {
+		font-size: 6em;	
+		font-weight: 100;
+		line-height: 0.6em;
+	}
+
+	#visual-menu .col-sm-3 { 
+		margin-bottom: 0;	
+	}
+
+	#visual-menu .col-sm-3:nth-child(2) { 
+		border-left: 10px solid #fff;
+		border-right: 5px solid #fff;
+		outline: 1px solid #fff;
+	}
+
+	#visual-menu .col-sm-3:nth-child(3) { 
+		border-left: 5px solid #fff;
+		border-right: 10px solid #fff;
+		outline: 1px solid #fff;
+	} 
+	
+	#menu input { 
+		width: 80%;
+		margin-right: 0;
+	}
+	
+	.shop-by-label h5, .shop-by-label h6 { 
+		padding-left: 20px;
+		padding-right: 20px;	
+	} 
+
+	.shop-by-label h5 { 
+		line-height: 0.5em;
+		font-size: 1.5em;
+	}	
+	
+	.content {
+		padding-left: 250px;
+		padding-right: 30px;
+	}
+	
+	#img-header.medium { 
+		min-height: 400px;
+	} 
+
+	#img-header.large { 
+		min-height: 350px;
+		max-height: 500px !important;
+	} 
+
+	
+}
+
+@media (min-width: 992px) {
+	.shop-by-label h5, .shop-by-label h6 { 
+		padding-left: 20px;
+		padding-right: 20px;	
+	} 
+
+	.shop-by-label h5 { 
+		line-height: 0.5em;
+		font-size: 2em;
+	}
+
+	#img-header.large { 
+		min-height: 350px;
+		max-height: 500px !important;
+	} 	
+	
+}
+
+@media (min-width: 1200px) {
+	.shop-by-label h5 {
+		font-size: 2.5em;		
+	}
+	
+	#img-header.large { 
+		min-height: 350px;
+		max-height: 500px !important;
+	} 	
+}
+

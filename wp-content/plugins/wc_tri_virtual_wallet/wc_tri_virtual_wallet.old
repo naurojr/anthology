@@ -1,0 +1,383 @@
+<?php
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+require_once( plugin_dir_path( __DIR__ ) . '/woocommerce/woocommerce.php');	
+/*
+Plugin Name: TRI - Virtual Wallet
+Description: Create a Virtual Wallet System for Surfaces' Order Portal
+Version: 1.0
+Author: Nauro Rezende Jr
+*/
+
+defined( 'ABSPATH' ) or exit;
+
+// Make sure WooCommerce is active
+if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+	return;
+}
+
+/**
+ * Add the gateway to WC Available Gateways
+ * 
+ * @since 1.0.0
+ * @param array $gateways all available WC gateways
+ * @return array $gateways all WC gateways + offline gateway
+ */
+function wc_virtual_wallet_add_to_gateways( $gateways ) {
+	$gateways[] = 'WC_Syspro_Virtual_Wallet';
+	return $gateways;
+}
+add_filter( 'woocommerce_payment_gateways', 'wc_virtual_wallet_add_to_gateways' );
+
+/**
+ * Adds plugin page links
+ * 
+ * @since 1.0.0
+ * @param array $links all plugin links
+ * @return array $links all plugin links + our custom links (i.e., "Settings")
+ */
+function wc_virtual_wallet_gateway_plugin_links( $links ) {
+	$plugin_links = array(
+		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=syspro_virtual_wallet' ) . '">' . __( 'Configure', 'tri-virtual-wallet' ) . '</a>'
+	);
+	return array_merge( $plugin_links, $links );
+}
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_virtual_wallet_gateway_plugin_links' );
+
+
+
+// SHOW USER CREDIT DATA
+add_action( 'show_user_profile', 'user_credit_fields_on_profile' );
+add_action( 'edit_user_profile', 'user_credit_fields_on_profile' );
+
+function user_credit_fields_on_profile( $user ) { 
+	$max_credit_allowed = esc_attr( get_the_author_meta( '_user_max_credit_allowed', $user->ID ) );
+	if(empty($max_credit_allowed) || $max_credit_allowed < 0) $max_credit_allowed = 0;
+
+
+	$syspro_credit_balance = esc_attr( get_the_author_meta( '_user_syspro_credit_balance', $user->ID ) );
+	if(empty($syspro_credit_balance) || $syspro_credit_balance < 0) $syspro_credit_balance = 0;
+	?>
+		<hr>
+		<h3><span class="dashicons dashicons-cart"></span> Virtual Wallet - User Credit</h3>
+
+		<table class="form-table">
+
+		<tr>
+			<th><label for="twitter">Max. Credit Allowed</label></th>
+
+			<td>
+				<input type="number" step="any" min="0" name="_user_max_credit_allowed" id="_user_max_credit_allowed" value="<?php echo $max_credit_allowed; ?>" class="regular-text" /><br />
+				<span class="description">Inform the maximum amount of credit this customer is allowed to have.</span>
+			</td>
+		</tr>
+
+		<tr>
+			<th><label for="twitter">Current Credit Balance on Syspro</label></th>
+
+			<td>
+				<input type="number" step="any" min="0" name="_user_syspro_credit_balance" id="_user_syspro_credit_balance" value="<?php echo $syspro_credit_balance; ?>" class="regular-text" /><br />
+				<span class="description">Show the current creidt available for this client.</span>
+			</td>
+		</tr>		
+
+		</table>
+		<hr>		
+<?php }	
+
+// SAVE CREDIT DATA FOR USER
+add_action( 'personal_options_update', 'save_user_credit_fields_on_profile' );
+add_action( 'edit_user_profile_update', 'save_user_credit_fields_on_profile' );
+
+function save_user_credit_fields_on_profile( $user_id ) {
+
+	if ( !current_user_can( 'edit_user', $user_id ) )
+		return false;
+
+	/* Copy and paste this line for additional fields. Make sure to change 'twitter' to the field ID. */
+	update_user_meta( $user_id, '_user_max_credit_allowed', $_POST['_user_max_credit_allowed'] );
+	update_user_meta( $user_id, '_user_syspro_credit_balance', $_POST['_user_syspro_credit_balance'] );
+}
+
+// SET INITIAL CREDIT VALUES FOR USERS
+add_action( 'user_register', 'create_inital_credit_for_user', 10, 1 );
+function create_inital_credit_for_user( $user_id ) {
+
+    if ( isset( $user_id ) ) {
+        update_user_meta($user_id, '_user_max_credit_allowed', 2000);
+        update_user_meta($user_id, '_user_syspro_credit_balance', 2000);
+	} 
+}
+
+//SHOW CREDIT ALERTS ON CHECKOUT
+add_action('woocommerce_checkout_order_review', 'my_custom_funtion', 15);
+function my_custom_funtion(){
+	global $woocommerce;
+
+	$syspro_credit_balance = esc_attr( get_the_author_meta( '_user_syspro_credit_balance', THE_USER_ID) );
+	$total = $woocommerce->cart->total;
+	
+	if (!is_wc_endpoint_url( 'order-pay' )):	
+	echo "<h3>Credit Available</h3>";
+	if($total < $syspro_credit_balance):
+    ?>	
+    	<style type='text/css'>
+	    	#credit-availability { 
+		   		    color: #004085;
+		   			background-color: #cce5ff;
+		   			border-color: #b8daff;
+	    	}
+	    	#credit-availability td { 
+		    		text-align: right;
+		    		font-size: 20px;
+					font-weight: bold;
+	    	}	    	
+	    </style>
+        <table class="shop_table" id="credit-availability">
+			<tbody>
+				<tr class="cart-subtotal">
+					<th>Your credit availability is: </th>
+					<td class="product-total"><?php echo wc_price($syspro_credit_balance); ?></td>
+				</tr>
+			</tbody>
+		</table>
+    <?php
+	elseif($total > $syspro_credit_balance && $syspro_credit_balance > 0): 
+	?>
+	<div class="alert alert-warning" role="alert">
+		<strong>Your current credit availability is <?php echo wc_price($syspro_credit_balance); ?></strong><br>
+		You don't have enough credit available to pay for this order. Please <a href="<?php echo get_bloginfo('siteurl'); ?>/my-account/orders/">pay open invoices</a> or proceed with Credit Card payment.
+	</div>			
+	<?php	
+	else:
+	?>
+	<div class="alert alert-danger" role="alert">
+		You don't have credit availability or your credit balance is zero, please contact Surfaces for more information.
+	</div>	
+	<?php
+	endif;
+	
+	endif;
+}
+
+//REMOVE VIRTUAL WALLET FROM PAYMENT OPTIONS WHEN AVAILABLE CREDIT IS SMALLER THAN ORDER COST
+function hide_credit_option_when_low_balance( $available_gateways ) {
+
+	$syspro_credit_balance = esc_attr( get_the_author_meta( '_user_syspro_credit_balance', THE_USER_ID) );
+	$total = $woocommerce->cart->total;
+		
+	if($total > $syspro_credit_balance ) { 		
+		unset( $available_gateways['syspro_virtual_wallet']);
+	}
+		
+	return $available_gateways;
+}
+add_filter( 'woocommerce_available_payment_gateways', 'hide_credit_option_when_low_balance');
+
+/*
+ * ADD CREDIT TAB ON MY ACCONT
+ * FROM: https://iconicwp.com/blog/add-custom-page-account-area-woocommerce/
+ */
+function iconic_account_menu_items( $items ) {
+	
+	$new_items = array();
+	$total_items = sizeof($items);
+	$i=0;
+	foreach($items as $key => $value) { 
+		$i++;
+		if($i == $total_items) { 
+			$new_items['my-credit'] = __( 'My Credit', 'tri-virtual-wallet' );
+		} 
+		$new_items[$key] = $value;
+	} 
+	
+    return $new_items;
+}
+add_filter( 'woocommerce_account_menu_items', 'iconic_account_menu_items', 10, 1 );
+
+/**
+ * Information content to My Credit Tab
+ */
+function iconic_information_endpoint_content() {
+	$syspro_credit_balance = esc_attr( get_the_author_meta( '_user_syspro_credit_balance', THE_USER_ID ) );
+	$total_credit_limit = esc_attr( get_the_author_meta( '_user_max_credit_allowed', THE_USER_ID ) ); 
+	echo "<h3>Credit Available</h3>";
+	?>
+
+    	<style type='text/css'>
+	    	#credit-availability { 
+		   		    color: #004085;
+		   			background-color: #cce5ff;
+		   			border-color: #b8daff;
+	    	}
+	    	#credit-availability td { 
+		    		text-align: right;
+		    		font-size: 20px;
+					font-weight: bold;
+	    	}	    	
+	    </style>
+        <table class="shop_table" id="credit-availability">
+			<tbody>
+				<tr class="cart-subtotal">
+					<th>Your credit availability is: </th>
+					<td class="product-total"><?php echo wc_price($syspro_credit_balance); ?></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Your total credit limit is <strong><?php echo wc_price($total_credit_limit); ?></strong>. To increase credit availability you can <a href="<?php echo get_bloginfo('siteurl'); ?>/my-account/orders/">pay open invoices</a> or contact Surfaces for additional credit. <p>
+
+    <?php 
+}
+
+add_action( 'woocommerce_account_my-credit_endpoint', 'iconic_information_endpoint_content' );
+
+
+/**
+ * Add endpoint
+ */
+function iconic_add_my_account_endpoint() {
+    add_rewrite_endpoint( 'my-credit', EP_PAGES );
+}
+add_action( 'init', 'iconic_add_my_account_endpoint' );
+
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+register_activation_hook( __FILE__, 'flush_rewrite_rules' );
+
+
+
+add_action( 'plugins_loaded', 'wc_virtual_wallet_gateway_init', 11 );
+function wc_virtual_wallet_gateway_init() {
+	
+	class WC_Syspro_Virtual_Wallet extends WC_Payment_Gateway {
+		/**
+		 * Constructor for the gateway.
+		 */
+		public function __construct() {
+	  
+			$this->id                 = 'syspro_virtual_wallet';
+			$this->icon               = apply_filters('woocommerce_offline_icon', '');
+			$this->has_fields         = false;
+			$this->method_title       = __( 'Virtual Wallet', 'tri-virtual-wallet' );
+			$this->method_description = __( 'Use your company credit to pay for your order later. Surfaces will send you an invoice once your order has been shipped.', 'tri-virtual-wallet' );
+		  
+			// Load the settings.
+			$this->init_form_fields();
+			$this->init_settings();
+		  
+			// Define user set variables
+			$this->title        = $this->get_option( 'title' );
+			$this->description  = $this->get_option( 'description' );
+			$this->instructions = $this->get_option( 'instructions', $this->description );
+		  
+			// Actions
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+			add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
+		  
+			// Customer Emails
+			add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+		}
+	
+	
+		/**
+		 * Initialize Gateway Settings Form Fields
+		 */
+		public function init_form_fields() {
+	  
+			$this->form_fields = apply_filters( 'wc_virtual_wallet_form_fields', array(
+		  
+				'enabled' => array(
+					'title'   => __( 'Enable/Disable', 'tri-virtual-wallet' ),
+					'type'    => 'checkbox',
+					'label'   => __( 'Enable Virtual Wallet Payment', 'tri-virtual-wallet' ),
+					'default' => 'yes'
+				),
+				
+				'title' => array(
+					'title'       => __( 'Title', 'tri-virtual-wallet' ),
+					'type'        => 'text',
+					'description' => __( 'This controls the title for the payment method the customer sees during checkout.', 'tri-virtual-wallet' ),
+					'default'     => __( 'Pay with Credit', 'tri-virtual-wallet' ),
+					'desc_tip'    => true,
+				),
+				
+				'description' => array(
+					'title'       => __( 'Description', 'tri-virtual-wallet' ),
+					'type'        => 'textarea',
+					'description' => __( 'Payment method description that the customer will see on your checkout.', 'tri-virtual-wallet' ),
+					'default'     => __( 'Please remit payment to Store Name upon pickup or delivery.', 'tri-virtual-wallet' ),
+					'desc_tip'    => true,
+				),
+				
+				'instructions' => array(
+					'title'       => __( 'Instructions', 'tri-virtual-wallet' ),
+					'type'        => 'textarea',
+					'description' => __( 'Instructions that will be added to the thank you page and emails.', 'tri-virtual-wallet' ),
+					'default'     => '',
+					'desc_tip'    => true,
+				),
+			) );
+		}
+	
+	
+		/**
+		 * Output for the order received page.
+		 */
+		public function thankyou_page() {
+			if ( $this->instructions ) {
+				echo wpautop( wptexturize( $this->instructions ) );
+			}
+		}
+	
+	
+		/**
+		 * Add content to the WC emails.
+		 *
+		 * @access public
+		 * @param WC_Order $order
+		 * @param bool $sent_to_admin
+		 * @param bool $plain_text
+		 */
+		public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
+		
+			if ( $this->instructions && ! $sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'on-hold' ) ) {
+				echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
+			}
+		}
+	
+	
+		/**
+		 * Process the payment and return the result
+		 *
+		 * @param int $order_id
+		 * @return array
+		 */
+		public function process_payment( $order_id ) {
+	
+			$order = wc_get_order( $order_id );
+			
+			// Mark as processing (order was paid with store credits)
+			$order->update_status( 'processing', __( 'Paid with credit', 'tri-virtual-wallet' ) );		
+			
+			// Reduce stock levels
+			$order->reduce_order_stock();
+			
+			//UPODATE CUSTOMER CREDIT AVAILABILITY 
+			$total = $order->get_total();
+			$customer_id = $order->get_customer_id();
+			$syspro_credit_balance = esc_attr( get_the_author_meta( '_user_syspro_credit_balance', $customer_id) );
+			$new_credit = $syspro_credit_balance - $total;
+			if($new_credit < 0) $new_credit = 0;
+			update_user_meta($customer_id, '_user_syspro_credit_balance', $new_credit);
+			
+			
+			// Remove cart
+			WC()->cart->empty_cart();
+			
+			// Return thankyou redirect
+			return array(
+				'result' 	=> 'success',
+				'redirect'	=> $this->get_return_url( $order )
+			);
+		}
+	
+  } // end \WC_Syspro_Virtual_Wallet class
+}

@@ -1,0 +1,8 @@
+Costumer key:
+ck_c10cb1051b40bd66380309b3420c7aa129966b85
+
+Customer Secret:
+cs_32c87921ebeba4b6bba5df1249827ec33881a2b4
+
+
+curl https://surfacesportal.wpengine.com/wp-json/wc/v2/orders/524 -u ck_ecaf9ae3104ceb08c927afa84539d72ab536bd8c:cs_9fb1b6ab43b1531472cd5493f3f4660a83c6e35f
